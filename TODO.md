@@ -25,9 +25,10 @@ A minimal dtSearch-style text indexer & search desktop app.
 - [ ] (deferred to M5) Incremental rebuild + delete-missing
 
 ## Milestone 3 — Search core (`src-tauri/src/search/`)
-- [ ] `query.rs` — Tantivy `QueryParser` path: boolean (AND/OR/NOT, +/-), phrase, proximity slop `"a b"~3`
-- [ ] `snippet.rs` — highlighted excerpts via Tantivy `SnippetGenerator` over stored `content`
-- [ ] Unit tests for boolean, phrase, proximity + snippet output
+- [x] `mod.rs` — `SearchEngine` over `QueryParser` (content + filename): boolean (AND/OR/NOT, +/-), phrase, proximity slop `"a b"~N`; returns `SearchHit` (path, filename, ext, size, modified, score, snippet)
+- [x] `snippet.rs` — highlighted excerpts via Tantivy `SnippetGenerator` over stored `content` (`<b>` highlights, escaped fallback to file start)
+- [x] Unit tests (8): single term, AND/OR/NOT, phrase (+reversed miss), proximity slop boundary, snippet highlight
+- [ ] (note) `query.rs` translation layer arrives in M4 for wildcard/regex/fuzzy
 
 ## Milestone 4 — Advanced query syntax (`search/query.rs`)
 - [ ] Wildcards (`invoic*`, `organi?e`) → glob→regex → `RegexQuery` on `content`
