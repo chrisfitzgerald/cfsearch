@@ -60,10 +60,15 @@ A minimal dtSearch-style text indexer & search desktop app.
 - [x] Minimal clean CSS (whitespace, monospace snippets, system light/dark)
 - [x] Syntax-hint UI: compact hint bar + full "Syntax help" reference modal (Esc/backdrop to close)
 - [x] Empty states (no indexes / select an index / no results); inline query + build/delete errors
+- [x] Nicer feedback: toast notifications (replace alert()), in-search spinner, build lifecycle toasts
 - [ ] Further refinements as they come up
 
 ## Milestone 8 — Package
-- [ ] `cargo tauri build` → installer / native binary
+- [x] Naming polish: productName/title `cfSearch`, larger default window + min size, real description
+- [x] `npm run tauri build` → release `cfsearch.exe` (15.6 MB) + MSI + NSIS installers
+  - MSI: `src-tauri/target/release/bundle/msi/cfSearch_0.1.0_x64_en-US.msi`
+  - NSIS: `src-tauri/target/release/bundle/nsis/cfSearch_0.1.0_x64-setup.exe`
+- [ ] (optional later) custom app icon; revisit identifier (`com.cfsearch.app` warns re macOS .app); code signing
 
 ---
 
