@@ -5,6 +5,7 @@
 //! supports boolean (`AND`/`OR`/`NOT`, `+`/`-`), phrase (`"..."`) and
 //! proximity (`"a b"~N`) syntax. Wildcard/regex/fuzzy come in Milestone 4.
 
+pub mod query;
 pub mod snippet;
 
 use std::path::Path;
@@ -17,6 +18,7 @@ use tantivy::schema::Value;
 use tantivy::{Index, IndexReader, TantivyDocument};
 
 use crate::index::schema::{build_schema, Fields};
+use query::QueryBuilder;
 use snippet::SnippetMaker;
 
 /// A single search result, ready to be serialized to the UI.
@@ -58,9 +60,8 @@ impl SearchEngine {
 
     /// Run `query_str` and return up to `limit` hits ordered by score.
     pub fn search(&self, query_str: &str, limit: usize) -> Result<Vec<SearchHit>> {
-        let query = self
-            .query_parser
-            .parse_query(query_str)
+        let query = QueryBuilder::new(&self.query_parser, self.fields.content)
+            .build(query_str)
             .with_context(|| format!("parsing query {query_str:?}"))?;
 
         let searcher = self.reader.searcher();
@@ -189,5 +190,53 @@ mod tests {
             "snippet should highlight the matched term, got: {}",
             hits[0].snippet
         );
+    }
+
+    #[test]
+    fn wildcard_suffix() {
+        let (_s, _i, engine) = fixture();
+        // "qui*" -> quick (file1 and file3)
+        let hits = engine.search("qui*", 10).unwrap();
+        assert_eq!(names(&hits), vec!["file1.txt", "file3.txt"]);
+    }
+
+    #[test]
+    fn wildcard_single_char() {
+        let (_s, _i, engine) = fixture();
+        // "?og" -> dog (file2 and file3)
+        let hits = engine.search("?og", 10).unwrap();
+        assert_eq!(names(&hits), vec!["file2.txt", "file3.txt"]);
+    }
+
+    #[test]
+    fn regex() {
+        let (_s, _i, engine) = fixture();
+        // /jump.*/ -> "jumps" in file1
+        let hits = engine.search("/jump.*/", 10).unwrap();
+        assert_eq!(names(&hits), vec!["file1.txt"]);
+    }
+
+    #[test]
+    fn fuzzy() {
+        let (_s, _i, engine) = fixture();
+        // "quik~1" is edit-distance 1 from "quick" (file1 and file3)
+        let hits = engine.search("quik~1", 10).unwrap();
+        assert_eq!(names(&hits), vec!["file1.txt", "file3.txt"]);
+    }
+
+    #[test]
+    fn wildcard_combined_with_boolean() {
+        let (_s, _i, engine) = fixture();
+        // quick (via wildcard) AND dog -> only file3
+        let hits = engine.search("qui* AND dog", 10).unwrap();
+        assert_eq!(names(&hits), vec!["file3.txt"]);
+    }
+
+    #[test]
+    fn negation_only_group() {
+        let (_s, _i, engine) = fixture();
+        // "-fox" -> every indexed doc except file1
+        let hits = engine.search("-fox", 10).unwrap();
+        assert_eq!(names(&hits), vec!["file2.txt", "file3.txt"]);
     }
 }

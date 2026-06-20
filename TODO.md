@@ -31,11 +31,13 @@ A minimal dtSearch-style text indexer & search desktop app.
 - [ ] (note) `query.rs` translation layer arrives in M4 for wildcard/regex/fuzzy
 
 ## Milestone 4 — Advanced query syntax (`search/query.rs`)
-- [ ] Wildcards (`invoic*`, `organi?e`) → glob→regex → `RegexQuery` on `content`
-- [ ] Regex (`/pattern/`) → `RegexQuery` directly
-- [ ] Fuzzy (`term~`, `term~1`) → `FuzzyTermQuery` with edit distance
-- [ ] Combine per-token sub-queries with a `BooleanQuery`
-- [ ] Unit test per operator against fixtures
+- [x] `QueryBuilder`: lexer + OR-of-AND-groups model (`-`/`NOT` negation, `+`, redundant `AND`)
+- [x] Wildcards (`invoic*`, `organi?e`) → glob→regex → `RegexQuery` on `content`
+- [x] Regex (`/pattern/`) → `RegexQuery` directly (case-insensitive: pattern lowercased)
+- [x] Fuzzy (`term~`, `term~N`) → `FuzzyTermQuery`, distance clamped to 2
+- [x] Combine sub-queries with `BooleanQuery`; plain terms/phrases delegated to `QueryParser`
+- [x] Unit tests per operator (6 new; 16 total passing) + CLI demo on real files
+- Known limitation: wildcard/regex/fuzzy hits use the file-start snippet (no term highlight)
 
 ## Milestone 5 — Incremental + multi-index (`index/store.rs`)
 - [ ] Named indexes, each in its own folder under the app data dir (`tauri::path`)
