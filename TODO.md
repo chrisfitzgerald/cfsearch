@@ -72,6 +72,54 @@ A minimal dtSearch-style text indexer & search desktop app.
 
 ---
 
+## Next session — backlog
+
+Status: v0.1.0 shipped (tag `v0.1.0` pushed; GitHub release created with NSIS + MSI
+installers). Two real indexes built locally (notes 37 docs, my documents 281 docs).
+Suggested order: **benchmark first** to get a baseline, then evaluate the index-size
+changes against it.
+
+### 1. Benchmark performance (do first — gives a baseline)
+- Measure: index **build throughput** (docs/sec, MB/sec), **search latency** per
+  operator, and **index size vs. source size** (so we can quantify the stop-word /
+  alphabet wins below).
+- Options: a `bench` subcommand in `src-tauri/examples/cli.rs` (quick), or a
+  `criterion` benchmark in `src-tauri/benches/`. CLI is simplest for build/size; use
+  criterion for search latency.
+- Record baseline numbers in this file before changing tokenization.
+
+### 2. Larger-file / larger-index tests
+- Add tests that generate a big synthetic corpus (many files, plus files near the
+  20 MB cap) and assert indexing completes, correctness holds, and incremental
+  rebuild scales. Mark heavy ones `#[ignore]` so the normal `cargo test` stays fast
+  (run with `cargo test -- --ignored`).
+- Reuse fixtures across the benchmark and these tests.
+
+### 3. Stop-word list (shrink index)
+- Default tokenizer keeps every token. Register a custom tokenizer with
+  `tantivy::tokenizer::StopWordFilter` and set it as the `content` field's indexing
+  tokenizer (`schema.rs`), then register the same named tokenizer on the index at both
+  build and search time (`index.tokenizers().register(name, ...)`).
+- ⚠️ Trade-offs: removed words can't be searched, and removing them shifts token
+  **positions** → affects phrase/proximity (`"a b"~N`) results. Decide whether to keep
+  positions (filter at query time only) or accept the change. Measure size delta vs. the
+  baseline.
+
+### 4. "Alphabet file" / tokenizer character handling (shrink further)
+- dtSearch's alphabet file ≈ Tantivy tokenizer config: which characters form tokens,
+  token length limits, folding.
+- Levers in a custom tokenizer: lower the `RemoveLongFilter` max length, add
+  `AsciiFoldingFilter`, restrict to ASCII/letters, drop pure-numeric or very short
+  tokens. Each shrinks the term dictionary but changes what's searchable — measure each
+  against the baseline and keep search quality acceptable.
+
+### 5. Custom app icons
+- Replace the default Tauri icons in `src-tauri/icons/`. Easiest: make a 1024×1024 PNG
+  and run `npm run tauri icon path\to\icon.png` (regenerates all sizes incl. `.ico`).
+  Rebuild installers afterward.
+
+---
+
 ## Verification
 - [ ] `cargo test` covers index core + each operator: boolean, phrase, wildcard `inv*`, regex `/inv.*/`, proximity `"a b"~3`, fuzzy `term~1`
 - [ ] `cargo tauri dev` end-to-end: create index from a real folder → progress bar completes → one search per operator returns correct hits + highlighted snippets → click result opens file + reveal in Explorer
