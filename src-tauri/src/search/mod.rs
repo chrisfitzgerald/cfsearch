@@ -48,7 +48,14 @@ impl SearchEngine {
         let (_schema, fields) = build_schema();
         let index = Index::open_in_dir(index_dir)
             .with_context(|| format!("opening index at {}", index_dir.display()))?;
-        let reader = index.reader().context("creating index reader")?;
+        // Manual reload: no background watcher thread, so the index's mmaps are
+        // released promptly when the engine is dropped (matters on Windows,
+        // where open mmaps block deleting the index directory).
+        let reader = index
+            .reader_builder()
+            .reload_policy(tantivy::ReloadPolicy::Manual)
+            .try_into()
+            .context("creating index reader")?;
         // Bare terms search content and filename by default.
         let query_parser = QueryParser::for_index(&index, vec![fields.content, fields.filename]);
         Ok(Self {

@@ -40,10 +40,12 @@ A minimal dtSearch-style text indexer & search desktop app.
 - Known limitation: wildcard/regex/fuzzy hits use the file-start snippet (no term highlight)
 
 ## Milestone 5 — Incremental + multi-index (`index/store.rs`)
-- [ ] Named indexes, each in its own folder under the app data dir (`tauri::path`)
-- [ ] `indexes.json` manifest: name, source folders, doc count, last-built time
-- [ ] Incremental rebuild: compare file `modified` vs stored doc; only re-index changed
-- [ ] Delete docs whose files no longer exist (`delete_term` on `path`)
+- [x] `IndexStore`: named indexes, each in its own slugified subfolder under a store root
+- [x] `indexes.json` manifest: name, dir, source folders, doc_count, last_built (millis)
+- [x] `update_index`: incremental — compare file mtime (millis) vs stored; only re-read changed
+- [x] Delete docs whose files are gone / no longer eligible (`delete_term` on `path`)
+- [x] Reader uses `ReloadPolicy::Manual` (no watcher thread); `delete` retries (Windows mmap release)
+- [x] Tests (4 new; 20 total): incremental add/modify/remove, create→build→search→delete, dup-name, slugify
 
 ## Milestone 6 — IPC + UI wiring
 - [ ] `commands.rs` — `list_indexes`, `create_index`, `build_index` (async + progress events), `delete_index`, `search`, `open_path`, `reveal_in_explorer`
