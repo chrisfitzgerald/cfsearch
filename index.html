@@ -9,6 +9,7 @@
   </head>
 
   <body>
+    <div class="toast-container" id="toasts"></div>
     <div id="app">
       <aside class="sidebar">
         <div class="brand">cf<span>Search</span></div>
@@ -18,14 +19,17 @@
 
       <main class="main">
         <header class="searchbar">
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Search the selected index…"
-            autocomplete="off"
-            spellcheck="false"
-            disabled
-          />
+          <div class="search-input-wrap">
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Search the selected index…"
+              autocomplete="off"
+              spellcheck="false"
+              disabled
+            />
+            <span class="spinner" id="searchSpinner" hidden></span>
+          </div>
           <div class="hint">
             <span class="hint-examples">
               <code>term</code> ·

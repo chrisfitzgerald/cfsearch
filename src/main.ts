@@ -46,6 +46,28 @@ const indexNameInput = $<HTMLInputElement>("indexName");
 const folderListEl = $<HTMLDivElement>("folderList");
 const modalError = $<HTMLDivElement>("modalError");
 const helpModal = $<HTMLDivElement>("helpModal");
+const searchSpinner = $<HTMLSpanElement>("searchSpinner");
+const toastContainer = $<HTMLDivElement>("toasts");
+
+// --- Toasts ----------------------------------------------------------------
+
+type ToastKind = "info" | "success" | "error";
+
+function toast(message: string, kind: ToastKind = "info") {
+  const el = document.createElement("div");
+  el.className = `toast ${kind}`;
+  el.textContent = message;
+  el.addEventListener("click", () => dismissToast(el));
+  toastContainer.append(el);
+  requestAnimationFrame(() => el.classList.add("show"));
+  window.setTimeout(() => dismissToast(el), kind === "error" ? 5000 : 3000);
+}
+
+function dismissToast(el: HTMLElement) {
+  if (!el.isConnected) return;
+  el.classList.remove("show");
+  window.setTimeout(() => el.remove(), 250);
+}
 
 // --- Indexes ---------------------------------------------------------------
 
@@ -148,10 +170,12 @@ function updateSearchAvailability() {
 async function buildIndex(name: string) {
   building.set(name, { name, indexed: 0, total: 0 });
   renderIndexList();
+  toast(`Building “${name}”…`);
   try {
-    await invoke<IndexInfo>("build_index", { name });
+    const info = await invoke<IndexInfo>("build_index", { name });
+    toast(`“${name}” built — ${info.doc_count} doc${info.doc_count === 1 ? "" : "s"}.`, "success");
   } catch (e) {
-    alert(`Build failed: ${e}`);
+    toast(`Build failed: ${e}`, "error");
   } finally {
     building.delete(name);
     await refreshIndexes();
@@ -165,8 +189,9 @@ async function deleteIndex(name: string) {
   }
   try {
     await invoke("delete_index", { name });
+    toast(`Deleted “${name}”.`);
   } catch (e) {
-    alert(`Delete failed: ${e}`);
+    toast(`Delete failed: ${e}`, "error");
   }
   await refreshIndexes();
 }
@@ -183,9 +208,11 @@ async function runSearch() {
   if (!query) {
     resultsEl.replaceChildren();
     statusEl.textContent = `Searching “${selected}”.`;
+    searchSpinner.hidden = true;
     return;
   }
 
+  searchSpinner.hidden = false;
   try {
     const hits = await invoke<SearchHit[]>("search", { index: selected, query, limit: 50 });
     if (seq !== searchSeq) return; // a newer search superseded this one
@@ -194,6 +221,8 @@ async function runSearch() {
     if (seq !== searchSeq) return;
     resultsEl.replaceChildren();
     statusEl.textContent = `Query error: ${e}`;
+  } finally {
+    if (seq === searchSeq) searchSpinner.hidden = true;
   }
 }
 
@@ -243,7 +272,7 @@ async function openFile(path: string) {
   try {
     await invoke("open_path", { path });
   } catch (e) {
-    alert(`Couldn't open file: ${e}`);
+    toast(`Couldn't open file: ${e}`, "error");
   }
 }
 
@@ -251,7 +280,7 @@ async function revealFile(path: string) {
   try {
     await invoke("reveal_path", { path });
   } catch (e) {
-    alert(`Couldn't reveal file: ${e}`);
+    toast(`Couldn't reveal file: ${e}`, "error");
   }
 }
 

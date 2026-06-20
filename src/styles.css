@@ -150,16 +150,41 @@ body {
   background: var(--panel);
 }
 
+.search-input-wrap {
+  position: relative;
+}
+
 .searchbar input {
   width: 100%;
   font-size: 16px;
-  padding: 11px 14px;
+  padding: 11px 40px 11px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg);
   color: var(--text);
   outline: none;
   transition: border-color 0.12s;
+}
+
+.spinner {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  margin-top: -8px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.spinner[hidden] {
+  display: none;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .searchbar input:focus {
   border-color: var(--accent);
@@ -482,4 +507,49 @@ button.danger:hover {
   border-radius: 4px;
   padding: 0 4px;
   font-size: 11.5px;
+}
+
+/* --- Toasts ------------------------------------------------------------- */
+
+.toast-container {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  cursor: pointer;
+  max-width: 360px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.success {
+  border-left-color: #2faa55;
+}
+.toast.error {
+  border-left-color: var(--danger);
+}
+.toast.info {
+  border-left-color: var(--accent);
 }
