@@ -57,9 +57,10 @@ A minimal dtSearch-style text indexer & search desktop app.
 - [x] Frontend type-checks + builds; app launches with new UI
 
 ## Milestone 7 — Polish
-- [ ] Minimal clean CSS (whitespace, monospace snippets, system light/dark)
-- [ ] Syntax-hint UI with examples of each operator
-- [ ] Error states + empty states
+- [x] Minimal clean CSS (whitespace, monospace snippets, system light/dark)
+- [x] Syntax-hint UI: compact hint bar + full "Syntax help" reference modal (Esc/backdrop to close)
+- [x] Empty states (no indexes / select an index / no results); inline query + build/delete errors
+- [ ] Further refinements as they come up
 
 ## Milestone 8 — Package
 - [ ] `cargo tauri build` → installer / native binary

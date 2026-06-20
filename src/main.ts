@@ -45,6 +45,7 @@ const modal = $<HTMLDivElement>("modal");
 const indexNameInput = $<HTMLInputElement>("indexName");
 const folderListEl = $<HTMLDivElement>("folderList");
 const modalError = $<HTMLDivElement>("modalError");
+const helpModal = $<HTMLDivElement>("helpModal");
 
 // --- Indexes ---------------------------------------------------------------
 
@@ -389,6 +390,22 @@ $("confirmCreate").addEventListener("click", () => void confirmCreate());
 $("cancelCreate").addEventListener("click", closeModal);
 modal.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
+});
+
+$("helpBtn").addEventListener("click", () => {
+  helpModal.hidden = false;
+});
+$("closeHelp").addEventListener("click", () => {
+  helpModal.hidden = true;
+});
+helpModal.addEventListener("click", (e) => {
+  if (e.target === helpModal) helpModal.hidden = true;
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    helpModal.hidden = true;
+    closeModal();
+  }
 });
 
 void listen<BuildProgress>("build-progress", (event) => {

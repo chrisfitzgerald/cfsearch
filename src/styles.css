@@ -173,6 +173,12 @@ body {
   font-size: 12px;
   color: var(--muted);
   line-height: 1.9;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.hint-examples {
+  flex: 1;
 }
 .hint code {
   background: var(--bg);
@@ -180,6 +186,18 @@ body {
   border-radius: 5px;
   padding: 1px 5px;
   font-size: 11px;
+}
+.hint-help {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0;
+  font-size: 12px;
+  text-decoration: underline;
+}
+.hint-help:hover {
+  filter: none;
 }
 
 .status {
@@ -379,4 +397,89 @@ button.danger:hover {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+/* --- Help / syntax reference ------------------------------------------- */
+
+.modal.help {
+  width: 640px;
+  max-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+}
+
+.help-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.help-head h2 {
+  margin: 0;
+}
+
+.help-body {
+  overflow-y: auto;
+  margin-top: 8px;
+  padding-right: 4px;
+}
+
+.help-body section {
+  margin-top: 18px;
+}
+.help-body h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.help-body .badge {
+  font-family: ui-monospace, monospace;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+.help-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.help-table td {
+  padding: 6px 0;
+  vertical-align: top;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+.help-table tr:first-child td {
+  border-top: none;
+}
+.help-table td:first-child {
+  width: 190px;
+  padding-right: 14px;
+}
+.help-table code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.help-table em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.help-note {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.help-note code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 11.5px;
 }

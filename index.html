@@ -27,21 +27,96 @@
             disabled
           />
           <div class="hint">
-            <code>term</code> ·
-            <code>"exact phrase"</code> ·
-            <code>a AND b</code> ·
-            <code>a OR b</code> ·
-            <code>-exclude</code> ·
-            <code>inv*</code> ·
-            <code>/re.ex/</code> ·
-            <code>fuzzy~1</code> ·
-            <code>"near words"~5</code>
+            <span class="hint-examples">
+              <code>term</code> ·
+              <code>"exact phrase"</code> ·
+              <code>a AND b</code> ·
+              <code>a OR b</code> ·
+              <code>-exclude</code> ·
+              <code>inv*</code> ·
+              <code>/re.ex/</code> ·
+              <code>fuzzy~1</code> ·
+              <code>"near words"~5</code>
+            </span>
+            <button class="hint-help" id="helpBtn" type="button">Syntax help</button>
           </div>
         </header>
 
         <div class="status" id="status"></div>
         <div class="results" id="results"></div>
       </main>
+    </div>
+
+    <div class="modal-backdrop" id="helpModal" hidden>
+      <div class="modal help">
+        <div class="help-head">
+          <h2>Search syntax</h2>
+          <button id="closeHelp" class="secondary small" type="button">Close</button>
+        </div>
+        <div class="help-body">
+          <section>
+            <h3>Basics</h3>
+            <table class="help-table">
+              <tr><td><code>budget</code></td><td>Find a single word.</td></tr>
+              <tr><td><code>budget report</code></td><td>Both words required (space means AND).</td></tr>
+              <tr><td><code>"purchase order"</code></td><td>An exact phrase, words in this order.</td></tr>
+            </table>
+          </section>
+
+          <section>
+            <h3>Boolean &amp; exclusion</h3>
+            <table class="help-table">
+              <tr><td><code>invoice AND 2025</code></td><td>Both terms must appear.</td></tr>
+              <tr><td><code>cat OR dog</code></td><td>Either term may appear.</td></tr>
+              <tr><td><code>report -draft</code></td><td>Has <em>report</em>, excludes <em>draft</em>.</td></tr>
+              <tr><td><code>report NOT draft</code></td><td>Same as <code>-draft</code>.</td></tr>
+              <tr><td><code>a b OR c</code></td><td>Groups as <em>(a AND b) OR c</em>.</td></tr>
+            </table>
+          </section>
+
+          <section>
+            <h3>Wildcards</h3>
+            <table class="help-table">
+              <tr><td><code>invoic*</code></td><td><code>*</code> = any run of characters (matches invoice, invoices…).</td></tr>
+              <tr><td><code>organi?e</code></td><td><code>?</code> = exactly one character (organise, organize).</td></tr>
+            </table>
+            <p class="help-note">Wildcards match within a single word, not across spaces.</p>
+          </section>
+
+          <section>
+            <h3>Regex <span class="badge">/…/</span></h3>
+            <table class="help-table">
+              <tr><td><code>/inv.*ce/</code></td><td>A raw regex between slashes.</td></tr>
+              <tr><td><code>/colou?r/</code></td><td>Matches color and colour.</td></tr>
+              <tr><td><code>/error\d+/</code></td><td><code>\d \w .</code> <code>* + ? | {n,m}</code> and char classes work.</td></tr>
+            </table>
+            <p class="help-note">
+              Matches whole <strong>words</strong> (case-insensitive), anchored end to end —
+              so <code>/inv/</code> matches only the exact word “inv”; use <code>/inv.*/</code>
+              for “starts with inv”. A pattern can’t span spaces; for multi-word matching use a
+              <code>"phrase"</code>. No look-around or backreferences.
+            </p>
+          </section>
+
+          <section>
+            <h3>Fuzzy &amp; proximity</h3>
+            <table class="help-table">
+              <tr><td><code>paymnet~1</code></td><td>Allow 1 typo (edit distance, max 2).</td></tr>
+              <tr><td><code>color~</code></td><td>Bare <code>~</code> defaults to distance 1.</td></tr>
+              <tr><td><code>"quick fox"~5</code></td><td>The two words within 5 of each other.</td></tr>
+            </table>
+          </section>
+
+          <section>
+            <h3>Combining</h3>
+            <table class="help-table">
+              <tr><td><code>invoic* AND 2025 -void</code></td><td>Mix any of the above freely.</td></tr>
+              <tr><td><code>/rece?ipt/ OR "purchase order"</code></td><td>Regex or a phrase.</td></tr>
+            </table>
+            <p class="help-note">Note: snippets highlight matched terms for word/phrase searches; wildcard, regex, and fuzzy results show the start of the file.</p>
+          </section>
+        </div>
+      </div>
     </div>
 
     <div class="modal-backdrop" id="modal" hidden>
