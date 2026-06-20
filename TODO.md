@@ -12,16 +12,17 @@ A minimal dtSearch-style text indexer & search desktop app.
 - [x] `npm install` — frontend builds (`npm run build` OK)
 - [x] `cargo build` — Rust/Tauri backend compiles + links to `cfsearch.exe` (MSVC linker verified)
 - [x] Confirm `npm run tauri dev` opens a window (default greet UI launched, build finished in 7.5s)
-- [ ] Commit baseline project structure (repo not yet git-initialized)
+- [x] Commit baseline project structure (`git init`, baseline commit on `main`)
 
 ## Milestone 2 — Index core (`src-tauri/src/index/`)
-- [ ] `schema.rs` — Tantivy schema: `path` (STRING|STORED, unique key), `filename` (TEXT|STORED), `ext` (STRING|STORED|FAST), `content` (TEXT|STORED), `modified` (i64 FAST|STORED), `size` (u64 FAST|STORED)
-- [ ] `builder.rs` — walk folders with the `ignore` crate
-- [ ] Filter by text-extension allow-list (`.txt`, `.md`, `.csv`, `.log`, `.json`, source code)
-- [ ] Skip oversized files (size cap) and binary files (null-byte / non-UTF heuristic)
-- [ ] Encoding detection via `chardetng` + decode via `encoding_rs`
-- [ ] Parallel read/parse with `rayon` feeding a single `IndexWriter`
-- [ ] Unit test: build an index from a fixture folder of `.txt`/`.md` files
+- [x] `schema.rs` — Tantivy schema: `path` (STRING|STORED, unique key), `filename` (TEXT|STORED), `ext` (STRING|STORED|FAST), `content` (TEXT|STORED), `modified` (i64 FAST|STORED), `size` (u64 FAST|STORED)
+- [x] `builder.rs` — walk folders with the `ignore` crate
+- [x] Filter by text-extension allow-list (~70 text/source extensions; see `DEFAULT_EXTENSIONS`)
+- [x] Skip oversized files (20 MB cap, configurable) and binary files (NUL-byte heuristic)
+- [x] Encoding detection via `chardetng` 1.0 + decode via `encoding_rs`
+- [x] Parallel read/decode with `rayon`, then sequential add to a single `IndexWriter` (full rebuild)
+- [x] Unit tests (3, all passing): term search, size cap, idempotent rebuild
+- [ ] (deferred to M5) Incremental rebuild + delete-missing
 
 ## Milestone 3 — Search core (`src-tauri/src/search/`)
 - [ ] `query.rs` — Tantivy `QueryParser` path: boolean (AND/OR/NOT, +/-), phrase, proximity slop `"a b"~3`
