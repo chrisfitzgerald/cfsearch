@@ -48,11 +48,13 @@ A minimal dtSearch-style text indexer & search desktop app.
 - [x] Tests (4 new; 20 total): incremental add/modify/remove, create→build→search→delete, dup-name, slugify
 
 ## Milestone 6 — IPC + UI wiring
-- [ ] `commands.rs` — `list_indexes`, `create_index`, `build_index` (async + progress events), `delete_index`, `search`, `open_path`, `reveal_in_explorer`
-- [ ] Emit Tauri progress events (files scanned / indexed / total)
-- [ ] UI left panel — index manager: create, pick folders (Tauri dialog), Build/Rebuild, progress bar, doc count + last-built
-- [ ] UI top — search box with syntax-hint helper
-- [ ] UI main — results list: filename, path, highlighted snippet, size/date; click to open; reveal in Explorer
+- [x] `commands.rs` — `list_indexes`, `create_index`, `build_index` (progress events), `delete_index`, `search`, `open_path`, `reveal_path`
+- [x] `state.rs` — `AppState` (store root under app-data + write lock); registered in `lib.rs` setup
+- [x] Emit `build-progress` events (indexed / total); search opens a fresh engine per call (no held mmaps)
+- [x] UI left panel — index list: New-index modal w/ folder picker (dialog plugin), Rebuild/Delete, live progress bar, doc count + last-built
+- [x] UI top — search box (debounced + Enter) with syntax-hint helper
+- [x] UI main — results: filename (click=open), path, highlighted snippet, size/date, Reveal button
+- [x] Frontend type-checks + builds; app launches with new UI
 
 ## Milestone 7 — Polish
 - [ ] Minimal clean CSS (whitespace, monospace snippets, system light/dark)

@@ -28,6 +28,7 @@ chardetng = "1.0.0"
 encoding_rs = "0.8.35"
 rayon = "1.12.0"
 anyhow = "1.0.102"
+tauri-plugin-dialog = "2.7.1"
 
 [dev-dependencies]
 filetime = "0.2.29"
