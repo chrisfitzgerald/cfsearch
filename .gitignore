@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# cfSearch CLI dev harness default index location
+.cfsearch_index/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
