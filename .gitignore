@@ -15,6 +15,10 @@ dist-ssr
 # cfSearch CLI dev harness default index location
 .cfsearch_index/
 
+# Generated mobile icons (desktop-only app; regenerate via `tauri icon`)
+src-tauri/icons/android/
+src-tauri/icons/ios/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
